@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Для Самой Красивой 💖</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #b3a2d8; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            /* Чтобы на мобилках не было синего выделения при клике */
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .card {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 420px;
+            max-width: 85%;
+            z-index: 10;
+        }
+
+        h1 { color: #4b3f92; font-size: 28px; margin-bottom: 15px; font-weight: bold; }
+        .emoji-main { font-size: 50px; margin-bottom: 20px; display: block; }
+        p { font-size: 20px; color: #000; margin-bottom: 30px; font-weight: 500; }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            min-height: 60px;
+        }
+
+        button {
+            padding: 12px 40px;
+            font-size: 18px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        #yesBtn { background-color: #7d6cf0; color: white; }
+        #noBtn { background-color: #e0e0e0; color: #757575; position: relative; }
+
+        #celebration img {
+            width: 220px; 
+            height: 310px; 
+            border-radius: 110px; 
+            object-fit: cover; 
+            border: 5px solid #fff; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="card" id="mainCard">
+    <div id="questionContent">
+        <h1>💖 Для Самой Красивой 💖</h1>
+        <div class="emoji-main">🥰😊</div>
+        <p>Будешь моей Валентинкой?</p>
+        <div class="buttons-container">
+            <button id="yesBtn">Да 💍</button>
+            <button id="noBtn">Нет</button>
+        </div>
+    </div>
+
+    <div id="celebration" style="display: none;">
+        <h1 style="color: #4b3f92; margin-bottom: 10px;">Ура! ❤️🥰</h1>
+        <p style="font-size: 18px; color: #333; margin-bottom: 20px;">С Днём Святого Валентина!</p>
+        <div style="display: flex; justify-content: center;">
+            <img src="her_photo.jpg" alt="Love">
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const questionContent = document.getElementById('questionContent');
+    const celebration = document.getElementById('celebration');
+
+    function moveButton(e) {
+        // Предотвращаем стандартное нажатие (особенно важно для тачскрина)
+        if (e) e.preventDefault();
+        
+        const padding = 50;
+        const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+        const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+        
+        const randomX = Math.random() * maxX;
+        const randomY = Math.random() * maxY;
+        
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = randomX + 'px';
+        noBtn.style.top = randomY + 'px';
+    }
+
+    // Слушаем и мышку, и касание пальцем
+    noBtn.addEventListener('mouseover', moveButton);
+    noBtn.addEventListener('touchstart', moveButton);
+
+    yesBtn.addEventListener('click', () => {
+        questionContent.style.display = 'none';
+        celebration.style.display = 'block';
+        document.body.style.background = '#ffebf0';
+
+        // 1. Фейерверк
+        var duration = 3 * 1000;
+        var end = Date.now() + duration;
+        (function frame() {
+            confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff0000', '#ff69b4'] });
+            confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff0000', '#ff69b4'] });
+            if (Date.now() < end) requestAnimationFrame(frame);
+        }());
+
+        // 2. Летающие сердца
+        for(let i = 0; i < 15; i++) { createHeartBalloon(); }
+    });
+
+    function createHeartBalloon() {
+        const heart = document.createElement('div');
+        heart.innerHTML = '❤️';
+        heart.style.position = 'fixed';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.bottom = '-100px';
+        heart.style.fontSize = (Math.random() * 30 + 30) + 'px';
+        heart.style.zIndex = '1';
+        heart.style.userSelect = 'none';
+        heart.style.transition = 'transform 0.3s ease-out';
+        document.body.appendChild(heart);
+
+        let posY = -100;
+        let speedY = Math.random() * 2 + 1;
+        function animate() {
+            posY += speedY;
+            heart.style.bottom = posY + 'px';
+            if (posY < window.innerHeight + 100) {
+                requestAnimationFrame(animate);
+            } else {
+                heart.remove();
+                createHeartBalloon();
+            }
+        }
+        animate();
+
+        const pop = () => {
+            heart.style.transform = 'scale(2)';
+            heart.style.opacity = '0';
+            setTimeout(() => heart.remove(), 200);
+        };
+        heart.addEventListener('touchstart', pop);
+        heart.addEventListener('mouseover', pop);
+    }
+</script>
+</body>
+</html>
